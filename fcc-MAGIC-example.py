@@ -40,9 +40,37 @@ def scale_datasets(dataframe, oversample = False):
         ros = RandomOverSampler()
         X, Y = ros.fit_resample(X, Y)
 
-        data = np.hstack((X, np.reshape(Y, (-1, 1))))
+    data = np.hstack((X, np.reshape(Y, (-1, 1))))
 
-        return data, X, Y
+    return data, X, Y
     
+'''
 print(len(train[train["class"]==1]))
 print(len(train[train["class"]==0]))
+'''
+train, X_train, Y_train = scale_datasets(train, oversample=True)
+valid, X_valid, Y_valid = scale_datasets(valid, oversample=False)
+test, X_test, Y_test = scale_datasets(test, oversample=False) 
+
+#kNN
+
+#  k-nearest neighbors (k is the 
+#                       number of neighbors to consider, 
+#                       with the euclidean distance)
+
+
+from sklearn.neighbors import KNeighborsClassifier 
+from sklearn.metrics import classification_report
+
+knn_model = KNeighborsClassifier(n_neighbors=5)
+knn_model.fit(X_train, Y_train)
+
+Y_pred = knn_model.predict(X_test) 
+
+print(classification_report(Y_test, Y_pred))
+
+#Naive Bayes
+
+
+
+
