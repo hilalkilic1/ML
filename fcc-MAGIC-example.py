@@ -67,10 +67,37 @@ knn_model.fit(X_train, Y_train)
 
 Y_pred = knn_model.predict(X_test) 
 
-print(classification_report(Y_test, Y_pred))
+#print(classification_report(Y_test, Y_pred))
 
 #Naive Bayes
 
+from sklearn.naive_bayes import GaussianNB
+
+nb_model = GaussianNB()
+nb_model.fit(X_train, Y_train)
+
+Y_pred_nb = nb_model.predict(X_test)
+#print(classification_report(Y_test, Y_pred_nb))
 
 
+#Logistic Regression p = S(mx + b)
+
+#Sigmoid Function S(y) = 1 / (1 + e^(-y))
+
+from sklearn.linear_model import LogisticRegression
+
+lg_model = LogisticRegression()
+lg_model = nb_model.fit(X_train, Y_train)
+
+#Support Vector Machine
+#kernel trick 
+
+from sklearn.svm import SVC
+svm_model = SVC()
+svm_model.fit(X_train, Y_train)
+
+Y_pred_svm = svm_model.predict(X_test)
+print(classification_report(Y_test, Y_pred_svm))
+
+#Neural Network
 
