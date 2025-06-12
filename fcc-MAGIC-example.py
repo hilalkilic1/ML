@@ -101,3 +101,56 @@ print(classification_report(Y_test, Y_pred_svm))
 
 #Neural Network
 
+import tensorflow as tf
+
+def plot_history(history):
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
+    ax1.plot(history.history['loss'], label='loss')
+    ax1.plot(history.history['val_loss'], label='val_loss')
+    ax1.set_ylabel('Binary Crossentropy')
+    ax1.set_xlabel('Epoch')
+    ax1.grid(True)
+
+    ax2.plot(history.history['accuracy'], label='accuracy')
+    ax2.plot(history.history['val_accuracy'], label='val_accuracy')
+    ax2.set_ylabel('Accuracy')
+    ax2.set_xlabel('Epoch')
+    ax2.grid(True)
+
+    plt.show()
+
+def train_model(X_train, Y_train, num_nodes, dropout_prob, lr, batch_size, epochs=100):
+    nn_model = tf.keras.Sequential([
+        tf.keras.layers.Dense(num_nodes, activation='relu', input_shape=(10,)),
+        tf.keras.layers.Dropout(dropout_prob), #this prevetns overfitting
+        tf.keras.layers.Dense(num_nodes, activation='relu'),
+        tf.keras.layers.Dropout(dropout_prob),
+        tf.keras.layers.Dense(1, activation='sigmoid')
+    ])
+
+    nn_model.compile(optimizer=tf.keras.optimizers.Adam(lr), 
+                  loss='binary_crossentropy', 
+                  metrics=['accuracy'])
+
+    history = nn_model.fit(X_train, Y_train, epochs=epochs, batch_size=batch_size, validation_split=0.2, verbose = 0)
+    
+    return nn_model, history
+
+least_val_loss = float('inf')
+least_loss_model = None
+epochs = 100
+for num_nodes in [8, 16, 32, 64]:
+    for dropout_prob in [0, 0.1, 0.2]:
+          for lr in [0.01, 0.005, 0.001]:
+            for batch_size in [16, 32, 64, 128]:
+                print(f"Training with num_nodes={num_nodes}, dropout_prob={dropout_prob}, lr={lr}, batch_size={batch_size}")
+                nn_model, history = train_model(X_train, Y_train, num_nodes, dropout_prob, lr, batch_size, epochs)
+                plot_history(history)
+                val_loss = nn_model.evaluate(X_valid, Y_valid)[0]
+                
+                if val_loss < least_val_loss:
+                    least_val_loss = val_loss
+                    least_loss_model = nn_model
+
+
+
